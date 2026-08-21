@@ -261,12 +261,12 @@ export function HamburgerMenu({
                 action.action_type === "RECONCILE_PAYOUT"
                   ? "Platform Payout Alert"
                   : action.action_type === "ADD_TRANSACTION"
-                  ? "New Expense Detected"
-                  : action.action_type === "UPDATE_TAX_ESTIMATE"
-                  ? "Tax Estimate Update"
-                  : action.action_type === "CLASSIFY_TRANSACTION"
-                  ? "Classify Transaction"
-                  : action.action_type.replace(/_/g, " ");
+                    ? "New Expense Detected"
+                    : action.action_type === "UPDATE_TAX_ESTIMATE"
+                      ? "Tax Estimate Update"
+                      : action.action_type === "CLASSIFY_TRANSACTION"
+                        ? "Classify Transaction"
+                        : action.action_type.replace(/_/g, " ");
 
               const proposed = action.proposed_payload || {};
               const financialImpact = proposed.financial_impact || {};
@@ -283,7 +283,7 @@ export function HamburgerMenu({
                     <Text style={styles.actionTitle} numberOfLines={1}>
                       {title}
                     </Text>
-                    <Text style={styles.agentBadge}>{action.agent_name}</Text>
+                    {/* <Text style={styles.agentBadge}>{action.agent_name}</Text> */}
                   </View>
 
                   {/* Message */}
@@ -295,7 +295,7 @@ export function HamburgerMenu({
                   {taxSetAside > 0 && (
                     <View style={styles.taxTag}>
                       <Text style={styles.taxTagText}>
-                        🔔 AI Recommends: Reserve {formatCurrency(taxSetAside)} for Taxes
+                        AI Recommends: Reserve {formatCurrency(taxSetAside)} for Taxes
                       </Text>
                     </View>
                   )}
@@ -445,7 +445,7 @@ export function HamburgerMenu({
                   strokeWidth={2.2}
                   color={theme.colors.onboarding.feedback.errorText}
                 />
-                <Text style={styles.signOutText}>Sign out / Start over</Text>
+                <Text style={styles.signOutText}>Sign out</Text>
               </>
             )}
           </Pressable>
@@ -552,6 +552,7 @@ const styles = StyleSheet.create({
     marginRight: theme.spacing.xs,
   },
   taxTag: {
+    textAlign: "center",
     backgroundColor: "#FFF9E6",
     borderWidth: 1,
     borderColor: "#FFE0B2",
@@ -688,6 +689,7 @@ const styles = StyleSheet.create({
     marginTop: "auto",
   },
   signOutButton: {
+    marginTop: 10,
     minHeight: 52,
     flexDirection: "row",
     alignItems: "center",

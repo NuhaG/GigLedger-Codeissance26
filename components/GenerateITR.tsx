@@ -5,14 +5,12 @@ import {
   Pressable,
   StyleSheet,
   Text,
-  View,
 } from "react-native";
 
 const N8N_WEBHOOK_URL =
   "https://shaurya2208.app.n8n.cloud/webhook/generate-itr-report";
 
-const MOCK_USER_ID =
-  "97fc9b68-f8b6-497f-8dc4-a6829af235f7";
+const MOCK_USER_ID = "97fc9b68-f8b6-497f-8dc4-a6829af235f7";
 
 export default function GenerateITR() {
   const [generating, setGenerating] = useState(false);
@@ -45,8 +43,8 @@ export default function GenerateITR() {
       if (!response.ok || !result.success) {
         throw new Error(
           result.error ||
-            result.message ||
-            `Failed to generate ITR report (${response.status})`
+          result.message ||
+          `Failed to generate ITR report (${response.status})`
         );
       }
 
@@ -54,12 +52,8 @@ export default function GenerateITR() {
         "ITR Report Generated",
         `Your ITR-3 report has been generated and sent to ${result.email}.`
       );
-
     } catch (error) {
-      console.error(
-        "Failed to generate ITR report:",
-        error
-      );
+      console.error("Failed to generate ITR report:", error);
 
       Alert.alert(
         "ITR Report Error",
@@ -73,87 +67,29 @@ export default function GenerateITR() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.eyebrow}>
-        TAX FILING
-      </Text>
-
-      <Text style={styles.title}>
-        Generate ITR Report
-      </Text>
-
-      <Text style={styles.subtitle}>
-        Generate your tax filing report for
-        FY 2025–26.
-      </Text>
-
-      <Pressable
-        onPress={generateITRReport}
-        disabled={generating}
-        style={({ pressed }) => [
-          styles.button,
-          pressed &&
-            !generating &&
-            styles.buttonPressed,
-          generating &&
-            styles.buttonDisabled,
-        ]}
-      >
-        {generating ? (
-          <>
-            <ActivityIndicator
-              size="small"
-              color="#FFFFFF"
-            />
-
-            <Text style={styles.buttonText}>
-              Generating...
-            </Text>
-          </>
-        ) : (
-          <Text style={styles.buttonText}>
-            Generate ITR Report
-          </Text>
-        )}
-      </Pressable>
-
-      {!generating && (
-        <Text style={styles.success}>
-          Your report will be sent to your registered email.
-        </Text>
+    <Pressable
+      onPress={generateITRReport}
+      disabled={generating}
+      style={({ pressed }) => [
+        styles.button,
+        pressed && !generating && styles.buttonPressed,
+        generating && styles.buttonDisabled,
+      ]}
+    >
+      {generating ? (
+        <>
+          <ActivityIndicator size="small" color="#FFFFFF" />
+          <Text style={styles.buttonText}>Generating...</Text>
+        </>
+      ) : (
+        <Text style={styles.buttonText}>Generate ITR Report</Text>
       )}
-    </View>
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-  },
-
-  eyebrow: {
-    fontSize: 11,
-    fontWeight: "700",
-    letterSpacing: 1.2,
-    color: "#68736F",
-  },
-
-  title: {
-    marginTop: 6,
-    fontSize: 24,
-    fontWeight: "800",
-    color: "#17201D",
-  },
-
-  subtitle: {
-    marginTop: 6,
-    fontSize: 14,
-    lineHeight: 20,
-    color: "#68736F",
-  },
-
   button: {
-    marginTop: 20,
     minHeight: 52,
     paddingHorizontal: 20,
     borderRadius: 16,
@@ -163,25 +99,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 10,
   },
-
   buttonPressed: {
     opacity: 0.8,
   },
-
   buttonDisabled: {
     opacity: 0.6,
   },
-
   buttonText: {
     color: "#FFFFFF",
     fontSize: 15,
     fontWeight: "800",
-  },
-
-  success: {
-    marginTop: 14,
-    fontSize: 13,
-    fontWeight: "600",
-    color: "#1F6F5B",
   },
 });

@@ -400,131 +400,131 @@ export default function HomeScreen() {
               <>
                 {/* Visual Tax Metric Bar Chart */}
                 <View style={styles.card}>
-              <View style={styles.cardHeader}>
-                <Text style={styles.eyebrow}>TAX METRICS SUMMARY</Text>
-                <Text style={styles.dateLabel}>
-                  {formatDate(estimate.calculated_at)}
-                </Text>
-              </View>
+                  <View style={styles.cardHeader}>
+                    <Text style={styles.eyebrow}>TAX METRICS SUMMARY</Text>
+                    <Text style={styles.dateLabel}>
+                      {formatDate(estimate.calculated_at)}
+                    </Text>
+                  </View>
 
-              {/* Net Tax Hero Value */}
-              <View style={styles.heroRow}>
-                <View>
-                  <Text style={styles.subtext}>Estimated Net Payable</Text>
-                  <Text style={styles.netAmount}>{formatCurrency(netPayable)}</Text>
+                  {/* Net Tax Hero Value */}
+                  <View style={styles.heroRow}>
+                    <View>
+                      <Text style={styles.subtext}>Estimated Net Payable</Text>
+                      <Text style={styles.netAmount}>{formatCurrency(netPayable)}</Text>
+                    </View>
+                    <View style={styles.regimeBadge}>
+                      <Text style={styles.regimeBadgeText}>
+                        {ragContext?.regime || "New Tax Regime"}
+                      </Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.dashedDivider} />
+
+                  {/* Visual Bar Graph */}
+                  <Text style={styles.sectionLabel}>Liability vs. Income Scale</Text>
+
+                  {/* Taxable Income Bar */}
+                  <View style={styles.barContainer}>
+                    <View style={styles.barLabelRow}>
+                      <Text style={styles.barLabel}>Taxable Income</Text>
+                      <Text style={styles.barValue}>{formatCurrency(grossIncome)}</Text>
+                    </View>
+                    <View style={styles.track}>
+                      <View
+                        style={[
+                          styles.fill,
+                          { width: "100%", backgroundColor: theme.colors.brandGreen },
+                        ]}
+                      />
+                    </View>
+                  </View>
+
+                  {/* Estimated Liability Bar */}
+                  <View style={styles.barContainer}>
+                    <View style={styles.barLabelRow}>
+                      <Text style={styles.barLabel}>Gross Liability</Text>
+                      <Text style={styles.barValue}>{formatCurrency(grossLiability)}</Text>
+                    </View>
+                    <View style={styles.track}>
+                      <View
+                        style={[
+                          styles.fill,
+                          {
+                            width: `${Math.min(100, Math.max(12, liabilityPercent * 2.5))}%`,
+                            backgroundColor: theme.colors.danger,
+                          },
+                        ]}
+                      />
+                    </View>
+                  </View>
+
+                  {/* TDS Credits Bar */}
+                  <View style={styles.barContainer}>
+                    <View style={styles.barLabelRow}>
+                      <Text style={styles.barLabel}>TDS Credits Offset</Text>
+                      <Text style={styles.barValue}>-{formatCurrency(tdsCredits)}</Text>
+                    </View>
+                    <View style={styles.track}>
+                      <View
+                        style={[
+                          styles.fill,
+                          {
+                            width: `${Math.min(100, Math.max(10, tdsPercent))}%`,
+                            backgroundColor: theme.colors.warning,
+                          },
+                        ]}
+                      />
+                    </View>
+                  </View>
                 </View>
-                <View style={styles.regimeBadge}>
-                  <Text style={styles.regimeBadgeText}>
-                    {ragContext?.regime || "New Tax Regime"}
-                  </Text>
+
+                {/* Detailed Breakdown Card */}
+                <View style={styles.card}>
+                  <Text style={styles.eyebrow}>TAX BREAKDOWN DETAILS</Text>
+
+                  <View style={styles.breakdownRow}>
+                    <Text style={styles.breakdownLabel}>Total Taxable Income</Text>
+                    <Text style={styles.breakdownValue}>{formatCurrency(grossIncome)}</Text>
+                  </View>
+
+                  <View style={styles.dashedDivider} />
+
+                  <View style={styles.breakdownRow}>
+                    <Text style={styles.breakdownLabel}>Estimated Tax Liability</Text>
+                    <Text style={[styles.breakdownValue, { color: theme.colors.danger }]}>
+                      {formatCurrency(grossLiability)}
+                    </Text>
+                  </View>
+
+                  <View style={styles.dashedDivider} />
+
+                  <View style={styles.breakdownRow}>
+                    <Text style={styles.breakdownLabel}>TDS Credits Applied</Text>
+                    <Text style={[styles.breakdownValue, { color: theme.colors.warning }]}>
+                      -{formatCurrency(tdsCredits)}
+                    </Text>
+                  </View>
+
+                  <View style={styles.dashedDivider} />
+
+                  <View style={styles.breakdownRow}>
+                    <Text style={styles.boldLabel}>Net Outstanding Liability</Text>
+                    <Text style={styles.boldValue}>{formatCurrency(netPayable)}</Text>
+                  </View>
+
+                  {ragContext?.notes && (
+                    <View style={styles.notesBox}>
+                      <Text style={styles.notesTitle}>AI Reasoning & Context</Text>
+                      <Text style={styles.notesText}>{ragContext.notes}</Text>
+                    </View>
+                  )}
                 </View>
-              </View>
-
-              <View style={styles.dashedDivider} />
-
-              {/* Visual Bar Graph */}
-              <Text style={styles.sectionLabel}>Liability vs. Income Scale</Text>
-
-              {/* Taxable Income Bar */}
-              <View style={styles.barContainer}>
-                <View style={styles.barLabelRow}>
-                  <Text style={styles.barLabel}>Taxable Income</Text>
-                  <Text style={styles.barValue}>{formatCurrency(grossIncome)}</Text>
-                </View>
-                <View style={styles.track}>
-                  <View
-                    style={[
-                      styles.fill,
-                      { width: "100%", backgroundColor: theme.colors.brandGreen },
-                    ]}
-                  />
-                </View>
-              </View>
-
-              {/* Estimated Liability Bar */}
-              <View style={styles.barContainer}>
-                <View style={styles.barLabelRow}>
-                  <Text style={styles.barLabel}>Gross Liability</Text>
-                  <Text style={styles.barValue}>{formatCurrency(grossLiability)}</Text>
-                </View>
-                <View style={styles.track}>
-                  <View
-                    style={[
-                      styles.fill,
-                      {
-                        width: `${Math.min(100, Math.max(12, liabilityPercent * 2.5))}%`,
-                        backgroundColor: theme.colors.danger,
-                      },
-                    ]}
-                  />
-                </View>
-              </View>
-
-              {/* TDS Credits Bar */}
-              <View style={styles.barContainer}>
-                <View style={styles.barLabelRow}>
-                  <Text style={styles.barLabel}>TDS Credits Offset</Text>
-                  <Text style={styles.barValue}>-{formatCurrency(tdsCredits)}</Text>
-                </View>
-                <View style={styles.track}>
-                  <View
-                    style={[
-                      styles.fill,
-                      {
-                        width: `${Math.min(100, Math.max(10, tdsPercent))}%`,
-                        backgroundColor: theme.colors.warning,
-                      },
-                    ]}
-                  />
-                </View>
-              </View>
-            </View>
-
-            {/* Detailed Breakdown Card */}
-            <View style={styles.card}>
-              <Text style={styles.eyebrow}>TAX BREAKDOWN DETAILS</Text>
-
-              <View style={styles.breakdownRow}>
-                <Text style={styles.breakdownLabel}>Total Taxable Income</Text>
-                <Text style={styles.breakdownValue}>{formatCurrency(grossIncome)}</Text>
-              </View>
-
-              <View style={styles.dashedDivider} />
-
-              <View style={styles.breakdownRow}>
-                <Text style={styles.breakdownLabel}>Estimated Tax Liability</Text>
-                <Text style={[styles.breakdownValue, { color: theme.colors.danger }]}>
-                  {formatCurrency(grossLiability)}
-                </Text>
-              </View>
-
-              <View style={styles.dashedDivider} />
-
-              <View style={styles.breakdownRow}>
-                <Text style={styles.breakdownLabel}>TDS Credits Applied</Text>
-                <Text style={[styles.breakdownValue, { color: theme.colors.warning }]}>
-                  -{formatCurrency(tdsCredits)}
-                </Text>
-              </View>
-
-              <View style={styles.dashedDivider} />
-
-              <View style={styles.breakdownRow}>
-                <Text style={styles.boldLabel}>Net Outstanding Liability</Text>
-                <Text style={styles.boldValue}>{formatCurrency(netPayable)}</Text>
-              </View>
-
-              {ragContext?.notes && (
-                <View style={styles.notesBox}>
-                  <Text style={styles.notesTitle}>AI Reasoning & Context</Text>
-                  <Text style={styles.notesText}>{ragContext.notes}</Text>
-                </View>
-              )}
-            </View>
+              </>
+            ) : null}
           </>
-        ) : null}
-      </>
-    )}
+        )}
       </ScrollView>
     </View>
   );
@@ -696,7 +696,7 @@ const styles = StyleSheet.create({
     paddingBottom: theme.spacing.xs,
   },
   linkButton: {
-    marginTop: theme.spacing.xs,
+    marginTop: theme.spacing.sm,
     paddingTop: theme.spacing.xs,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: theme.colors.borderLight,
@@ -705,7 +705,8 @@ const styles = StyleSheet.create({
     opacity: 0.75,
   },
   linkText: {
-    fontSize: theme.fontSize.xs,
+    marginTop: 3,
+    fontSize: theme.fontSize.sm,
     fontWeight: theme.typography.fontWeights.bold,
     color: theme.colors.brandGreen,
   },

@@ -21,7 +21,7 @@ export default function OnboardingStep1Screen() {
 
   return (
     <OnboardingLayout
-      step={1}
+      step={2}
       eyebrow="Link your bank"
       title="Onboarding"
       subtitle="Connect your bank so we can track income and expenses automatically."
@@ -38,8 +38,7 @@ export default function OnboardingStep1Screen() {
       <View style={styles.intro}>
         <Text style={styles.headline}>Link your bank</Text>
         <Text style={styles.subtext}>
-          Choose the bank your gig income lands in. This lets us surface your real cash flow —
-          nothing is shared beyond what's needed to categorize transactions.
+          Choose the bank your gig income lands in. This lets us surface your real cash flow.
         </Text>
       </View>
 

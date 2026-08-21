@@ -25,6 +25,8 @@ import {
 
 import { Header } from "@/components/Header";
 import { theme } from "@/constants/theme";
+// Adjust this import path to wherever you place the component
+import GenerateITR from "@/components/GenerateITR";
 
 // API Response Payload Schema Matching Your Backend JSON
 interface TaxRule {
@@ -171,6 +173,7 @@ export default function TaxScreen({ userId = "97fc9b68-f8b6-497f-8dc4-a6829af235
     100
   );
   const reservePercent = 100 - safePercent;
+  const isHighReserve = reservePercent >= 15;
 
   return (
     <View style={styles.container}>
@@ -198,21 +201,45 @@ export default function TaxScreen({ userId = "97fc9b68-f8b6-497f-8dc4-a6829af235
             </View>
           </View>
 
-          <View style={styles.amountDisplayRow}>
-            <View>
-              <Text style={styles.heroAmountLabel}>Safe to Spend Balance</Text>
-              <Text style={styles.safeAmountValue}>
-                ₹{safeToSpend.toLocaleString("en-IN")}
-              </Text>
+          {/* PRIMARY NUMBER — the one thing that matters most */}
+          <View style={styles.primaryAmountBlock}>
+            <Text style={styles.primaryAmountLabel}>Safe to Spend</Text>
+            <Text style={styles.primaryAmountValue}>
+              ₹{safeToSpend.toLocaleString("en-IN")}
+            </Text>
+            <Text style={styles.primaryAmountHint}>
+              What's left after your tax reserve is set aside
+            </Text>
+          </View>
+
+          {/* SECONDARY STATS — bank balance vs. tax reserve, side by side */}
+          <View style={styles.heroStatsRow}>
+            <View style={styles.heroStatChip}>
+              <View style={styles.heroStatIconWrap}>
+                <Wallet size={12} color={theme.colors.surface} />
+              </View>
+              <View style={styles.flexShrink}>
+                <Text style={styles.heroStatLabel}>Bank Balance</Text>
+                <Text style={styles.heroStatValue}>
+                  ₹{taxData.currentBalance.toLocaleString("en-IN")}
+                </Text>
+              </View>
             </View>
-            <View style={styles.bankTotalBadge}>
-              <Text style={styles.bankTotalLabel}>Current Bank Balance</Text>
-              <Text style={styles.bankTotalValue}>
-                ₹{taxData.currentBalance.toLocaleString("en-IN")}
-              </Text>
+
+            <View style={[styles.heroStatChip, styles.heroStatChipWarning]}>
+              <View style={styles.heroStatIconWrap}>
+                <Lock size={12} color={theme.colors.warning} />
+              </View>
+              <View style={styles.flexShrink}>
+                <Text style={styles.heroStatLabel}>Tax Reserve</Text>
+                <Text style={styles.heroStatValue}>
+                  ₹{taxData.estimatedTaxLiability.toLocaleString("en-IN")}
+                </Text>
+              </View>
             </View>
           </View>
 
+          {/* VISUAL METER */}
           <View style={styles.visualWalletContainer}>
             <View style={styles.barLabelRow}>
               <Text style={styles.barLabelGreen}>{safePercent}% Available Cash</Text>
@@ -225,34 +252,15 @@ export default function TaxScreen({ userId = "97fc9b68-f8b6-497f-8dc4-a6829af235
             </View>
           </View>
 
-          <View style={styles.heroFooterDivider} />
-
-          <View style={styles.heroMetricsRow}>
-            <View style={styles.heroMetricItem}>
-              <View style={styles.legendDotGreen} />
-              <View>
-                <Text style={styles.heroMetricLabel}>Free to Spend</Text>
-                <Text style={styles.heroMetricValue}>
-                  ₹{safeToSpend.toLocaleString("en-IN")}
-                </Text>
-              </View>
+          {/* URGENCY NUDGE — only surfaces when the reserve is a meaningful chunk */}
+          {isHighReserve && (
+            <View style={styles.urgencyBanner}>
+              <ShieldAlert size={13} color={theme.colors.warning} />
+              <Text style={styles.urgencyBannerText}>
+                {reservePercent}% of your balance is locked for taxes — avoid dipping into it.
+              </Text>
             </View>
-
-            <View style={styles.metricSeparator} />
-
-            <View style={styles.heroMetricItem}>
-              <View style={styles.legendDotOrange} />
-              <View>
-                <View style={styles.rowAlign}>
-                  <Text style={styles.heroMetricLabel}>Tax Reserve Liability</Text>
-                  <Lock size={10} color={theme.colors.warning} style={styles.lockIconInline} />
-                </View>
-                <Text style={[styles.heroMetricValue, styles.textWarning]}>
-                  ₹{taxData.estimatedTaxLiability.toLocaleString("en-IN")}
-                </Text>
-              </View>
-            </View>
-          </View>
+          )}
         </View>
 
         {/* SECTION 44ADA TAX CALCULATION WATERFALL */}
@@ -329,7 +337,7 @@ export default function TaxScreen({ userId = "97fc9b68-f8b6-497f-8dc4-a6829af235
                 <CheckCircle2 size={14} color={theme.colors.brandGreen} />
               </View>
               <View>
-                <Text style={styles.waterfallTitle}>Statutory TDS Credits (Sec 194-O) Recovered</Text>
+                <Text style={styles.waterfallTitle}>Statutory TDS Credits (Sec 194-O)</Text>
                 <Text style={styles.waterfallSubtext}>Withheld by e-commerce/gig platforms</Text>
               </View>
             </View>
@@ -391,6 +399,9 @@ export default function TaxScreen({ userId = "97fc9b68-f8b6-497f-8dc4-a6829af235
             </Pressable>
           ))}
         </View>
+
+        {/* GENERATE ITR — single button, sits at the bottom of the page */}
+        <GenerateITR />
       </ScrollView>
 
       {/* STATUTE EXPLAINABILITY MODAL */}
@@ -490,7 +501,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: theme.spacing.sm,
+    marginBottom: theme.spacing.md,
   },
   walletIconContainer: {
     flexDirection: "row",
@@ -516,41 +527,64 @@ const styles = StyleSheet.create({
     fontWeight: theme.typography.fontWeights.bold,
     color: theme.colors.brandGreen,
   },
-  amountDisplayRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-end",
-    marginTop: 4,
+  primaryAmountBlock: {
+    marginBottom: theme.spacing.md,
   },
-  heroAmountLabel: {
+  primaryAmountLabel: {
     fontSize: theme.fontSize.xs,
+    fontWeight: theme.typography.fontWeights.medium,
     color: theme.colors.mutedSage.muted1,
   },
-  safeAmountValue: {
-    fontSize: 32,
+  primaryAmountValue: {
+    fontSize: 40,
+    lineHeight: 46,
     fontWeight: theme.typography.fontWeights.black,
     color: theme.colors.brandGreen,
-    marginTop: 2,
+    marginTop: 4,
   },
-  bankTotalBadge: {
-    alignItems: "flex-end",
-    backgroundColor: "rgba(255, 255, 255, 0.06)",
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: theme.radius.sm,
-  },
-  bankTotalLabel: {
+  primaryAmountHint: {
     fontSize: theme.fontSize.micro,
     color: theme.colors.mutedSage.muted1,
+    marginTop: 4,
   },
-  bankTotalValue: {
-    fontSize: theme.fontSize.xs,
+  heroStatsRow: {
+    flexDirection: "row",
+    gap: theme.spacing.xs,
+    marginBottom: theme.spacing.md,
+  },
+  heroStatChip: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.06)",
+    borderRadius: theme.radius.sm,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+  },
+  heroStatChipWarning: {
+    borderLeftWidth: 3,
+    borderLeftColor: theme.colors.warning,
+  },
+  heroStatIconWrap: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+  },
+  heroStatLabel: {
+    fontSize: 15,
+    color: theme.colors.mutedSage.muted1,
+  },
+  heroStatValue: {
+    fontSize: theme.fontSize.md,
     fontWeight: theme.typography.fontWeights.bold,
     color: theme.colors.surface,
     marginTop: 2,
   },
   visualWalletContainer: {
-    marginTop: theme.spacing.md,
     gap: 6,
   },
   barLabelRow: {
@@ -583,60 +617,22 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.warning,
     borderRadius: theme.radius.full,
   },
-  heroFooterDivider: {
-    height: 1,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    marginVertical: theme.spacing.md,
-  },
-  heroMetricsRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  heroMetricItem: {
-    flex: 1,
+  urgencyBanner: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.06)",
+    borderRadius: theme.radius.sm,
+    borderLeftWidth: 3,
+    borderLeftColor: theme.colors.warning,
+    padding: theme.spacing.sm,
+    marginTop: theme.spacing.md,
   },
-  legendDotGreen: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: theme.colors.brandGreen,
-  },
-  legendDotOrange: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: theme.colors.warning,
-  },
-  metricSeparator: {
-    width: 1,
-    height: 24,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    marginHorizontal: theme.spacing.md,
-  },
-  heroMetricLabel: {
+  urgencyBannerText: {
+    flex: 1,
     fontSize: theme.fontSize.micro,
-    color: theme.colors.mutedSage.muted1,
-  },
-  heroMetricValue: {
-    fontSize: theme.fontSize.sm,
-    fontWeight: theme.typography.fontWeights.semibold,
+    lineHeight: 16,
     color: theme.colors.surface,
-    marginTop: 2,
-  },
-  rowAlign: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  lockIconInline: {
-    marginTop: -1,
-  },
-  textWarning: {
-    color: theme.colors.warning,
   },
   sectionHeader: {
     flexDirection: "row",

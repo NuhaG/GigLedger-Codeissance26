@@ -21,7 +21,7 @@ export default function OnboardingStep2Screen() {
 
   return (
     <OnboardingLayout
-      step={2}
+      step={3}
       eyebrow="Almost there"
       title="Onboarding"
       subtitle="Tell us which gig platforms you work with."
@@ -38,7 +38,7 @@ export default function OnboardingStep2Screen() {
       <View style={styles.intro}>
         <Text style={styles.headline}>Your platforms</Text>
         <Text style={styles.subtext}>
-          Pick every platform you earn from. You can select more than one — we'll pull in payout
+          Pick every platform you earn from. You can select more than one - we'll pull in payout
           data for each.
         </Text>
       </View>

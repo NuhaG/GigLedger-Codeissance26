@@ -15,13 +15,14 @@ import {
   View,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { Camera, ImageIcon, PenLine, ScanLine } from "lucide-react-native";
+import { useRouter } from "expo-router";
+import { ArrowLeft, Camera, ImageIcon, PenLine, ScanLine } from "lucide-react-native";
 
 import { Header } from "@/components/Header";
 import { ReceiptEditForm } from "@/components/ReceiptEditForm";
 import { theme } from "@/constants/theme";
 import { extractReceiptData } from "@/lib/api/geminiOcr";
-import { supabase } from "@/lib/supabase"; // Implemented Supabase Client
+import { supabase } from "@/lib/supabase";
 import { ReceiptData } from "@/types/receipt";
 
 type ScanStep = "pick" | "processing" | "review";
@@ -39,6 +40,7 @@ const EMPTY_RECEIPT: ReceiptData = {
 };
 
 export default function ScanScreen() {
+  const router = useRouter();
   const [step, setStep] = useState<ScanStep>("pick");
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [receiptData, setReceiptData] = useState<ReceiptData>(EMPTY_RECEIPT);
@@ -49,6 +51,14 @@ export default function ScanScreen() {
     setImageUri(null);
     setReceiptData(EMPTY_RECEIPT);
     setOcrError(null);
+  };
+
+  const handleBack = () => {
+    if (step !== "pick") {
+      resetFlow();
+    } else if (router.canGoBack()) {
+      router.back();
+    }
   };
 
   const processImage = async (uri: string, base64: string, mimeType: string) => {
@@ -72,7 +82,6 @@ export default function ScanScreen() {
 
       setReceiptData(fallbackPayload);
 
-      // Log pending action directly to Supabase on failure
       try {
         const { error: dbError } = await supabase.from("pending_actions").insert([
           {
@@ -142,10 +151,27 @@ export default function ScanScreen() {
     setStep("review");
   };
 
+  const renderTopBar = () => (
+    <View style={styles.topBar}>
+      <Pressable
+        onPress={handleBack}
+        accessibilityRole="button"
+        accessibilityLabel="Go back"
+        style={({ pressed }) => [styles.backButton, pressed && styles.buttonPressed]}
+        hitSlop={8}
+      >
+        <ArrowLeft color={theme.colors.ink} size={22} />
+        <Text style={styles.backText}>Back</Text>
+      </Pressable>
+    </View>
+  );
+
   if (step === "pick") {
     return (
       <View style={styles.container}>
-        <Header title="Scan Receipt" />
+        <Header eyebrow="Scan" title="Scan Receipt" />
+
+
         <View style={styles.pickContent}>
           <View style={styles.iconCircle}>
             <ScanLine color={theme.colors.primary} size={40} />
@@ -184,6 +210,8 @@ export default function ScanScreen() {
             <PenLine color={theme.colors.textMuted} size={16} />
             <Text style={styles.manualLinkText}>Enter Manually</Text>
           </Pressable>
+
+          {renderTopBar()}
         </View>
       </View>
     );
@@ -192,7 +220,9 @@ export default function ScanScreen() {
   if (step === "processing") {
     return (
       <View style={styles.container}>
-        <Header title="Scan Receipt" />
+        <Header eyebrow="Scan" title="Scan Receipt" />
+        {renderTopBar()}
+
         <View style={styles.processingContent}>
           {imageUri && (
             <Image source={{ uri: imageUri }} style={styles.previewImage} />
@@ -213,7 +243,9 @@ export default function ScanScreen() {
 
   return (
     <View style={styles.container}>
-      <Header title="Scan Receipt" />
+      <Header eyebrow="Scan" title="Scan Receipt" />
+      {renderTopBar()}
+
       {ocrError && (
         <View style={styles.ocrWarning}>
           <Text style={styles.ocrWarningText}>
@@ -237,7 +269,27 @@ export default function ScanScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.pageBg,
+  },
+  topBar: {
+    paddingHorizontal: theme.spacing.md,
+    paddingTop: theme.spacing.xs,
+    paddingBottom: theme.spacing.xs,
+    backgroundColor: theme.colors.pageBg,
+  },
+  backButton: {
+    marginTop: 80,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: theme.spacing.xs,
+    alignSelf: "flex-start",
+    paddingVertical: theme.spacing.xs,
+    paddingRight: theme.spacing.sm,
+  },
+  backText: {
+    fontSize: theme.fontSize.md,
+    fontWeight: theme.typography.fontWeights.medium,
+    color: theme.colors.ink,
   },
   pickContent: {
     flex: 1,
@@ -249,15 +301,15 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: "#EEF2FF",
+    backgroundColor: theme.colors.surfaceSubtle,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: theme.spacing.lg,
   },
   pickTitle: {
     fontSize: theme.fontSize.xl,
-    fontWeight: "700",
-    color: theme.colors.text,
+    fontWeight: theme.typography.fontWeights.bold,
+    color: theme.colors.ink,
     marginBottom: theme.spacing.xs,
   },
   pickSubtitle: {
@@ -283,7 +335,7 @@ const styles = StyleSheet.create({
   primaryButtonText: {
     color: "#fff",
     fontSize: theme.fontSize.md,
-    fontWeight: "700",
+    fontWeight: theme.typography.fontWeights.bold,
   },
   outlineButton: {
     flexDirection: "row",
@@ -299,7 +351,7 @@ const styles = StyleSheet.create({
   outlineButtonText: {
     color: theme.colors.primary,
     fontSize: theme.fontSize.md,
-    fontWeight: "700",
+    fontWeight: theme.typography.fontWeights.bold,
   },
   buttonPressed: {
     opacity: 0.8,
@@ -314,7 +366,7 @@ const styles = StyleSheet.create({
   manualLinkText: {
     color: theme.colors.textMuted,
     fontSize: theme.fontSize.sm,
-    fontWeight: "500",
+    fontWeight: theme.typography.fontWeights.medium,
   },
   processingContent: {
     flex: 1,
@@ -335,8 +387,8 @@ const styles = StyleSheet.create({
   },
   processingText: {
     fontSize: theme.fontSize.lg,
-    fontWeight: "600",
-    color: theme.colors.text,
+    fontWeight: theme.typography.fontWeights.semibold,
+    color: theme.colors.ink,
     marginTop: theme.spacing.sm,
   },
   processingSubtext: {

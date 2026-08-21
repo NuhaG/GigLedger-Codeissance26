@@ -20,10 +20,7 @@ function NavigationGate() {
 
   useEffect(() => {
     if (!isReady) return;
-
     const inOnboarding = segments[0] === "onboarding";
-
-  
 
     if (!state.onboardingCompleted) {
       const currentStepPath = `/onboarding/step-${state.currentStep}`;
@@ -33,7 +30,6 @@ function NavigationGate() {
       }
       return;
     }
-
 
     if (state.onboardingCompleted && inOnboarding) {
       router.replace("/(tabs)");

@@ -4,19 +4,21 @@ import { StyleSheet, Text, View } from "react-native";
 import { theme } from "@/constants/theme";
 
 interface OnboardingProgressProps {
-  currentStep: 0 | 1 | 2;
-  totalSteps?: number;
+  currentStep: number; // e.g. 1, 2, or 3
+  totalSteps?: number; // default to 3
 }
 
-export function OnboardingProgress({ currentStep, totalSteps = 2 }: OnboardingProgressProps) {
+export function OnboardingProgress({ currentStep, totalSteps = 3 }: OnboardingProgressProps) {
   const pad = (n: number) => String(n).padStart(2, "0");
-  const fillPct = (currentStep / totalSteps) * 100;
+
+  // Ensure fill percentage calculates safely based on 1-based indexing
+  const fillPct = Math.min(Math.max((currentStep / totalSteps) * 100, 0), 100);
 
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
         <Text style={styles.stepLabel}>
-          STEP {pad(currentStep)} / {pad(totalSteps)}
+          STEP {pad(currentStep)} OF {pad(totalSteps)}
         </Text>
       </View>
       <View style={styles.track}>
@@ -43,7 +45,7 @@ const styles = StyleSheet.create({
     color: theme.colors.onboarding.progress.stepActive,
   },
   track: {
-    height: 4,
+    height: 8, // Made thicker for better visual hierarchy
     borderRadius: theme.radius.full,
     backgroundColor: theme.colors.onboarding.progress.track,
     overflow: "hidden",

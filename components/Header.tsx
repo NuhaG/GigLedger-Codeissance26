@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Animated,
   Pressable,
   StyleSheet,
   Text,
@@ -48,7 +47,7 @@ export function Header({ eyebrow, title, subtitle, onMenuClose }: HeaderProps) {
 
   useEffect(() => {
     fetchPendingCount();
-  }, [menuOpen]); // Refetch when menu state changes
+  }, [menuOpen]);
 
   const fetchPendingCount = async () => {
     try {
@@ -79,21 +78,15 @@ export function Header({ eyebrow, title, subtitle, onMenuClose }: HeaderProps) {
           },
         ]}
       >
-        {/* Page heading */}
-        {/* <View style={styles.headingContainer}>
-          {eyebrow && <Text style={styles.eyebrow}>{eyebrow}</Text>}
-          {title && <Text style={styles.title}>{title}</Text>}
-          {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
-        </View> */}
-
-            <Animated.View style={styles.splashContent}>
-        <View style={styles.logoCircle}>
-          <Ionicons name="receipt-outline" size={40} color="#0b2e21" />
+        {/* Left Section: Logo & Brand Name */}
+        <View style={styles.brandContainer}>
+          <View style={styles.logoCircle}>
+            <Ionicons name="receipt-outline" size={20} color={theme.colors.tankDark} />
+          </View>
+          <Text style={styles.brandTitle}>GigLedger</Text>
         </View>
-        <Text style={styles.splashTitle}>GigLedger</Text>
-      </Animated.View>
 
-        {/* Actions */}
+        {/* Right Section: Actions */}
         <View style={styles.actions}>
           <Pressable
             onPress={handleScan}
@@ -154,32 +147,29 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: theme.spacing.md,
     paddingBottom: theme.spacing.sm,
-    backgroundColor: theme.colors.pageBg,
+    backgroundColor: theme.colors.surfaceSubtle, // Soft green tinted header background
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: theme.colors.border,
     zIndex: 100,
   },
-  headingContainer: {
-    flex: 1,
+  brandContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: theme.spacing.sm,
+  },
+  logoCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: theme.colors.waterGreenLight,
+    alignItems: "center",
     justifyContent: "center",
   },
-  eyebrow: {
-    fontSize: theme.typography.eyebrow.fontSize,
-    fontWeight: theme.typography.eyebrow.fontWeight,
-    letterSpacing: theme.typography.eyebrow.letterSpacing,
-    color: theme.colors.mutedSage.muted1,
-  },
-  title: {
-    marginTop: 2,
-    fontSize: theme.fontSize.xl,
+  brandTitle: {
+    fontSize: theme.fontSize.lg,
     fontWeight: theme.typography.fontWeights.black,
     color: theme.colors.ink,
-    letterSpacing: -0.8,
-  },
-  subtitle: {
-    marginTop: 2,
-    fontSize: theme.fontSize.sm,
-    color: theme.colors.mutedSage.muted1,
+    letterSpacing: -0.5,
   },
   actions: {
     flexDirection: "row",
@@ -205,7 +195,7 @@ const styles = StyleSheet.create({
     borderRadius: theme.radius.full,
     paddingHorizontal: 5,
     paddingVertical: 1,
-    minWidth: 16,
+    minWidth: 20,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -213,33 +203,5 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 10,
     fontWeight: theme.typography.fontWeights.black,
-  },
-    splashRoot: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  splashContent: {
-    alignItems: "center",
-  },
-  logoCircle: {
-    width: 84,
-    height: 84,
-    borderRadius: 42,
-    backgroundColor: "#d9ece1",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 20,
-    shadowColor: "#000",
-    shadowOpacity: 0.25,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 6,
-  },
-  splashTitle: {
-    fontSize: 28,
-    fontWeight: "800",
-    color: "#eafff3",
-    letterSpacing: 0.4,
   },
 });

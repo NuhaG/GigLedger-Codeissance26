@@ -17,7 +17,7 @@ import { OnboardingLayout } from "@/components/onboarding/OnboardingLayout";
 import { theme } from "@/constants/theme";
 import { useOnboarding } from "@/context/OnboardingContext";
 
-const SPLASH_DURATION = 4000;
+const SPLASH_DURATION = 2000;
 
 // ---------- Splash ----------
 function SplashScreen({ onFinish }: { onFinish: () => void }) {
@@ -134,10 +134,10 @@ export default function OnboardingStep0Screen() {
 
   return (
     <OnboardingLayout
-      step={0}
-      eyebrow="Create Profile"
+      step={1}
+      eyebrow=""
       title="Onboarding"
-      subtitle="Enter your details to get started with your tax and financial demo."
+      subtitle=""
       footer={
         <OnboardingFooter
           ctaLabel="Create user"
@@ -163,7 +163,7 @@ export default function OnboardingStep0Screen() {
               style={styles.inputWithIcon}
               value={name}
               onChangeText={setName}
-              placeholder="e.g. Jane Doe"
+              placeholder="e.g. Rahul Singh"
               placeholderTextColor={theme.colors.textMuted}
               autoCapitalize="words"
               autoCorrect={false}
@@ -180,7 +180,7 @@ export default function OnboardingStep0Screen() {
               style={styles.inputWithIcon}
               value={email}
               onChangeText={setEmail}
-              placeholder="e.g. jane.doe@example.com"
+              placeholder="e.g. rahulsingh@gmail.com"
               placeholderTextColor={theme.colors.textMuted}
               keyboardType="email-address"
               autoCapitalize="none"

@@ -11,6 +11,7 @@ export default function OnboardingLayoutRoute() {
         contentStyle: { backgroundColor: theme.colors.pageBg },
       }}
     >
+        
       <Stack.Screen name="step-0" />
       <Stack.Screen name="step-1" />
       <Stack.Screen name="step-2" />
